@@ -17,14 +17,6 @@ class MemoryRepository(AbstractRepository[T]):
         self._container: dict[int, T] = {}
         self._counter = count(1)
 
-    def add(self, obj: T) -> int:
-        if getattr(obj, 'pk', None) != 0:
-            raise ValueError(f'trying to add object {obj} with filled `pk` attribute')
-        pk = next(self._counter)
-        self._container[pk] = obj
-        obj.pk = pk
-        return pk
-
     def get(self, pk: int) -> T | None:
         return self._container.get(pk)
 
@@ -33,6 +25,15 @@ class MemoryRepository(AbstractRepository[T]):
             return list(self._container.values())
         return [obj for obj in self._container.values()
                 if all(getattr(obj, attr) == value for attr, value in where.items())]
+
+    
+    def add(self, obj: T) -> int:
+        if getattr(obj, 'pk', None) != 0:
+            raise ValueError(f'trying to add object {obj} with filled `pk` attribute')
+        pk = next(self._counter)
+        self._container[pk] = obj
+        obj.pk = pk
+        return pk
 
     def update(self, obj: T) -> None:
         if obj.pk == 0:
