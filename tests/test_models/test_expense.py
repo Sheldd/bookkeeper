@@ -1,3 +1,7 @@
+"""
+Тесты для расходных операций
+"""
+
 from datetime import datetime
 
 import pytest
